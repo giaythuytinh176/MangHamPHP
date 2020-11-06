@@ -6,10 +6,24 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
         $username = $_POST['username'];
         $email = $_POST['email'];
         $phone = $_POST['phone'];
+        $error = '';
 
-        $json_file = "/Users/letam/Library/Mobile Documents/com~apple~CloudDocs/webroot/MangHamPHP/users.json";
-        saveDataJSON("users.json", $username, $email, $phone);
-        echo "Saved successfully.";
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $error = "Dinh dang mail ko dung";
+        }
+
+        if (empty($username) || empty($email) || empty($phone)) {
+            $error = "Ban chua nhap thong tin";
+        }
+
+        if (isset($error)){
+            echo $error;
+        }
+
+        if (empty($error)) {
+            saveDataJSON("users.json", $username, $email, $phone);
+            echo "Saved successfully.";
+        }
     } else {
         echo "Bạn chưa nhập.";
     }
@@ -18,14 +32,13 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
 
 function saveDataJSON($filename, $name, $email, $phone)
 {
-    $json_file = "/Users/letam/Library/Mobile Documents/com~apple~CloudDocs/webroot/MangHamPHP/$filename";
-    if (!file_exists($json_file)) {
-        file_put_contents($json_file, "[]");
+    if (!file_exists($filename)) {
+        file_put_contents($filename, "[]");
     }
-    $js_decode = json_decode(file_get_contents($json_file), true);
+    $js_decode = json_decode(file_get_contents($filename), true);
     $contact = array('name' => $name, 'email' => $email, 'phone' => $phone);
     array_push($js_decode, $contact);
-    file_put_contents($json_file, json_encode($js_decode, JSON_PRETTY_PRINT));
+    file_put_contents($filename, json_encode($js_decode, JSON_PRETTY_PRINT));
 }
 
 ?>
@@ -80,13 +93,13 @@ function saveDataJSON($filename, $name, $email, $phone)
         <th>Email</th>
         <th>Phone</th>
     </tr>
-    <?php foreach (json_decode(file_get_contents("/Users/letam/Library/Mobile Documents/com~apple~CloudDocs/webroot/MangHamPHP/users.json"), true) as $registration): ?>
+    <?php foreach (json_decode(file_get_contents("/Users/letam/Library/Mobile Documents/com~apple~CloudDocs/webroot/MangHamPHP/users.json"), true) as $registration) { ?>
         <tr>
             <td><?= $registration['name']; ?></td>
             <td><?= $registration['email']; ?></td>
             <td><?= $registration['phone']; ?></td>
         </tr>
-    <?php endforeach; ?>
+    <?php }; ?>
 </table>
 
 
