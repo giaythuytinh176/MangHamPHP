@@ -5,11 +5,13 @@ echo findMin($arr);
 
 function findMin($arr)
 {
+    $index = 0;
     $min = $arr[0];
     for ($i = 0; $i < count($arr); $i++) {
         if ($min > $arr[$i]) {
             $min = $arr[$i];
+            $index = $i;
         }
     }
-    return $min;
+    return [$index, $min];
 }
